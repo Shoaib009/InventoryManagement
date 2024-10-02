@@ -204,8 +204,16 @@
                     $("#productPrice").val("");
                     $("#productQuantity").val("");
                     $("#productCategoryId").val("");
-                    alert(response.message);
-                    window.location.reload();
+                    Swal.fire({
+                        // position: "top-end",
+                        icon: "success",
+                        title: response.message,
+                        showConfirmButton: true,
+                        //timer: 1500
+                    });
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, "1000");
                 } else {
                     alert(response.message);
                 }
@@ -260,7 +268,7 @@
         var productQuantity = $('#updateProductQuantity').val();
         var productCategoryId = $('#updateProductCategoryId').val();
         var isError = false;
-       if (productName == null || productName == undefined || productName == "") {
+        if (productName == null || productName == undefined || productName == "") {
             $(".update-product-detail-error").text("Please enter Product name");
             $(".update-product-detail-error").css("display", "block");
             isError = true;

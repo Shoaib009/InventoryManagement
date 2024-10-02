@@ -37,6 +37,18 @@ namespace InventoryManagement.Controllers
             var Inventory = _databaseContext.Categories.Where(x => x.IsDeleted == false).ToList();
             return View(Inventory);
         }
+        public IActionResult User()
+        {
+            //var UserData = 
+            return View();
+        }
+
+        public IActionResult Registration()
+        {
+            //var UserData = 
+            return View();
+        }
+
         [HttpPost]
         public JsonResult CreateCategory([FromBody] CreateTaskRequest Req)
         {
@@ -122,6 +134,21 @@ namespace InventoryManagement.Controllers
             {
                 return new JsonResult(new { success = false, message = "Please enter the procuct name, price and quantity." });
             }
+            
+            var existingProduct = _databaseContext.Products.FirstOrDefault(x => x.Name.ToLower().Equals(requestProduct.Name.ToLower()));
+            if (existingProduct != null && existingProduct.IsDeleted == false)
+            {
+                return new JsonResult(new { success = false, message = "This Product name already exists. Please enter a new product name." });
+            }
+            else if (existingProduct != null && existingProduct.IsDeleted == true)
+            {
+                existingProduct.IsDeleted = false;
+                _databaseContext.Products.Update(existingProduct);
+                _databaseContext.SaveChanges();
+                return new JsonResult(new { success = true, message = "Product added successfully. Congrats!." });
+
+            }
+
             else
             {
                 var AddProduct = new Product { Name = requestProduct.Name, Price = requestProduct.Price, Quantity = requestProduct.Quantity, CategoryId = requestProduct.CategoryId };

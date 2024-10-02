@@ -1,0 +1,28 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    ViewData["Title"] = "User Registration";
+}
+<h1class ="d-grid gap-2 col-8 mx-auto">Registration</h1class>
+
+<form action="/Home/Registration" class="d-grid gap-2 col-8 mx-auto">
+    <label for="fname">First Name:</label>
+    <input required type="text" id="fname" name="Name" placeholder="please enter your first name">
+    <label for="lname">Last Name:</label>
+    <input required type="text" id="lname" name="Name" placeholder="please enter your last name">
+    <label for="InputEmail1">Email:</label>
+    <input required type="email" id="InputEmail1" name="Email" placeholder="please enter your Email">
+    <label for="ConfirmInputEmail1">Confirm Email:</label>
+    <input required type="email" id="ConfirmInputEmail1" name="Email" placeholder="Confirm your Email">
+    <label for="phoneNumber">Phone Number:</label>
+    <input required type="tel" id="phoneNumber" name="phoneNumber" placeholder="please enter your phone Number">
+    <label for="InputPassword1">Password:</label>
+    <input required type="password" id="InputPassword1" name="Password" placeholder="please enter your Password">
+    <label for="ConfirmInputPassword1">Confirm Password:</label>
+    <input required type="password" id="ConfirmInputPassword1" name="Password" placeholder="Confirm your Password">
+    <input class="btn btn-primary" type="submit" value="Submit">
+</form>
+<br />

@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "User Login";
+}
+<form action="/Home/User" class="d-grid gap-2 col-8 mx-auto">
+    <label for="InputEmail1">Email:</label>
+    <input required type="email" id="InputEmail1" name="Email" placeholder="please enter your Email">
+    <label for="InputPassword1">Password:</label>
+    <input required type="password" id="InputPassword1" name="Password" placeholder="please enter your Password">
+    <input class="btn btn-primary" type="submit" value="Submit">
+</form><br/>
+<div class="d-grid gap-4 col-8 mx-auto">
+    <a class="btn btn-primary" asp-controller="Home" asp-action="Registration">Create New Account</a>
+</div>
