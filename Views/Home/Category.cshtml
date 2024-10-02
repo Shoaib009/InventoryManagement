@@ -17,8 +17,8 @@
 
         @if (Model != null && Model.Count() > 0)
         {
-            <table class="table" >
-                <thead >
+            <table class="table">
+                <thead>
                     <tr>
                         <th scope="col">Category</th>
                         <th scope="col">Actions</th>
@@ -120,12 +120,19 @@
             contentType: 'application/json',
             dataType: "JSON",
             success: function (response) {
-                debugger
                 if (response.success) {
                     $('#addmodal').modal('hide');
                     $("#taskDetail").val("");
-                    alert(response.message);
-                    window.location.reload();
+                    Swal.fire({
+                        // position: "top-end",
+                        icon: "success",
+                        title: response.message,
+                        showConfirmButton: true,
+                        //timer: 1500
+                    });
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, "1000");
                 } else {
                     alert(response.message);
                 }
@@ -168,12 +175,12 @@
         $("#updateTaskId").val(id);
     }
 
-    function triggerUpdateApi(){
+    function triggerUpdateApi() {
         var id = $("#updateTaskId").val();
         var taskDetail = $("#updateTaskDetail").val();
 
         var request = { Id: id, Name: taskDetail };
-        $.ajax({ 
+        $.ajax({
             type: 'POST',
             url: '/Home/UpdateCategory',
             data: JSON.stringify(request),

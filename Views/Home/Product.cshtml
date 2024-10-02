@@ -37,10 +37,10 @@
                             <td>@item.Quantity</td>
                             <td>@Model.Category.Where(x => x.Id == item.CategoryId).FirstOrDefault().Name</td>
                             <td>
-                                <button class="btn btn-primary" id="updateBtn" onclick="updateTask(@item.Id, '@item.Name', '@item.Price', '@item.Quantity')">
+                                <button class="btn btn-primary" id="updateBtn" onclick="updateProduct(@item.Id, '@item.Name', '@item.Price', '@item.Quantity', '@item.CategoryId')">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-danger" id="deleteBtn" onclick="deleteTask(@item.Id)">
+                                <button class="btn btn-danger" id="deleteBtn" onclick="deleteProduct(@item.Id)">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </td>
@@ -66,33 +66,34 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="task" class="form-label">Product</label>
-                    <input type="text" class="form-control" id="taskDetail" placeholder="Please enter Product name here." aria-describedby="task detail">
-                    <div class="invalid-feedback task-detail-error"></div>
+                    <label for="productDetail" class="form-label">Product</label>
+                    <input type="text" class="form-control" id="productDetail" placeholder="Please enter Product name here." aria-describedby="product detail">
+                    <div class="invalid-feedback product-detail-error"></div>
                 </div>
                 <div class="mb-3">
-                    <label for="task" class="form-label">Price</label>
-                    <input type="text" class="form-control" id="taskPrice" placeholder="Please enter price here." aria-describedby="task price">
-                    <div class="invalid-feedback task-price-error"></div>
+                    <label for="productPrice" class="form-label">Price</label>
+                    <input type="number" class="form-control" id="productPrice" placeholder="Please enter price here." aria-describedby="product price">
+                    <div class="invalid-feedback product-price-error"></div>
                 </div>
                 <div class="mb-3">
-                    <label for="task" class="form-label">Quantity</label>
-                    <input type="text" class="form-control" id="taskQuantity" placeholder="Please enter quantity here." aria-describedby="task quantity">
-                    <div class="invalid-feedback task-quantity-error"></div>
+                    <label for="productQuantity" class="form-label">Quantity</label>
+                    <input type="number" class="form-control" id="productQuantity" placeholder="Please enter quantity here." aria-describedby="product quantity">
+                    <div class="invalid-feedback product-quantity-error"></div>
                 </div>
-                <select id="taskCategoryId" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                    <option>Please select the categoty</option>
+                <label for="productCategoryId" class="form-label">Select Category</label>
+                <select id="productCategoryId" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    <option value="">Please select the categoty</option>
                     @foreach (var x in Model.Category)
                     {
                         <option value="@x.Id">@x.Name</option>
                     }
                 </select>
-                <div class="invalid-feedback task-CategoryId-error"></div>
+                <div class="invalid-feedback product-CategoryId-error"></div>
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="saveTask()">Save Task</button>
+                <button type="button" class="btn btn-primary" onclick="saveProduct()">Save Product</button>
             </div>
         </div>
     </div>
@@ -108,70 +109,87 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="task" class="form-label">Product</label>
-                    <input type="text" class="form-control" id="updateTaskDetail" aria-describedby="task detail">
-                    <div class="invalid-feedback task-detail-error"></div>
-                    <label for="task" class="form-label">Price</label>
-                    <input type="text" class="form-control" id="updatePriceDetail" aria-describedby="task price">
-                    <div class="invalid-feedback task-price-error"></div>
-                    <label for="task" class="form-label">Quantity</label>
-                    <input type="text" class="form-control" id="updateQuantityDetail" aria-describedby="task quantity">
-                    <div class="invalid-feedback task-quantity-error"></div>
-                    <select id="updateCategoryId" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                        <option>Please select the categoty</option>
+                    <label for="updateProductDetail" class="form-label">Product</label>
+                    <input type="text" class="form-control" id="updateProductDetail" aria-describedby="product detail">
+                    <div class="invalid-feedback update-product-detail-error"></div>
+                    <label for="updateProductPrice" class="form-label">Price</label>
+                    <input type="text" class="form-control" id="updateProductPrice" aria-describedby="product price">
+                    <div class="invalid-feedback update-product-price-error"></div>
+                    <label for="updateProductQuantity" class="form-label">Quantity</label>
+                    <input type="text" class="form-control" id="updateProductQuantity" aria-describedby="product quantity">
+                    <div class="invalid-feedback update-product-quantity-error"></div>
+                    <label for="updateProductCategoryId" class="form-label">Select Category</label>
+                    <select id="updateProductCategoryId" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                        <option value="0">Please select the category</option>
                         @foreach (var x in Model.Category)
                         {
                             <option value="@x.Id">@x.Name</option>
                         }
                     </select>
-                    <div class="invalid-feedback task-CategoryId-error"></div>
-                    <input type="hidden" id="updateTaskId">
+                    <div class="invalid-feedback update-product-CategoryId-error"></div>
+                    <input type="hidden" id="updateProductId">
 
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="triggerUpdateApi()">Update Category</button>
+                <button type="button" class="btn btn-primary" onclick="triggerUpdateApi()">Update Product</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    function saveTask() {
+    function saveProduct() {
         // validation
-        var taskName = $("#taskDetail").val();
-        var taskPrice = $('#taskPrice').val();
-        var taskQuantity = $('#taskQuantity').val();
-        var taskCategoryId = $('#taskCategoryId').val();
-        if (taskName == null || taskName == undefined || taskName == "" || taskName == null || taskPrice == undefined ||
-            taskPrice == "" || taskQuantity == null || taskQuantity == undefined || taskQuantity == "" || taskCategoryId == null ||
-            taskCategoryId == undefined || taskCategoryId == 0
-        ) {
-            $(".task-detail-error").text("Please enter Product name");
-            $(".task-price-error").text("Please enter Price");
-            $(".task-quantity-error").text("Please enter Qunatiy");
-            $(".task-CategoryId-error").text("Please select category from the dropdown list");
-            $(".task-detail-error").css("display", "block");
-            $(".task-price-error").css("display", "block");
-            $(".task-quantity-error").css("display", "block");
-            $(".task-CategoryId-error").css("display", "block");
-
-            return;
-        } else {
-            $(".task-detail-error").text("");
-            $(".task-price-error").text("");
-            $(".task-quantity-error").text("");
-            $(".task-CategoryId-error").text("");
-            $(".task-detail-error").css("display", "none");
-            $(".task-price-error").css("display", "none");
-            $(".task-quantity-error").css("display", "none");
-            $(".task-CategoryId-error").css("display", "none");
-
+        var productName = $("#productDetail").val();
+        var productPrice = $('#productPrice').val();
+        var productQuantity = $('#productQuantity').val();
+        var productCategoryId = $('#productCategoryId').val();
+        var isError = false;
+        if (productName == null || productName == undefined || productName == "") {
+            $(".product-detail-error").text("Please enter Product name");
+            $(".product-detail-error").css("display", "block");
+            isError = true;
+        }
+        else {
+            $(".product-detail-error").text("");
+            $(".product-detail-error").css("display", "none");
+        }
+        if (productPrice == null || productPrice == undefined || productPrice == 0) {
+            $(".product-price-error").text("Please enter Product price");
+            $(".product-price-error").css("display", "block");
+            isError = true;
 
         }
+        else {
+            $(".product-price-error").text("");
+            $(".product-price-error").css("display", "none");
+        }
+        if (productQuantity == null || productQuantity == undefined || productQuantity == 0) {
+            $(".product-quantity-error").text("Please enter Product quantity");
+            $(".product-quantity-error").css("display", "block");
+            isError = true;
+
+        }
+        else {
+
+            $(".product-quantity-error").text("");
+            $(".product-quantity-error").css("display", "none");
+        }
+        if (productCategoryId == null || productCategoryId == undefined || productCategoryId == 0) {
+            $(".product-CategoryId-error").text("Please select category from the dropdown list");
+            $(".product-CategoryId-error").css("display", "block");
+            isError = true;
+        }
+        else {
+
+            $(".product-CategoryId-error").text("");
+            $(".product-CategoryId-error").css("display", "none");
+        }
+        if (isError) { return; }
         // then ajax call
-        var request = { Name: taskName, Price: taskPrice, Quantity: taskQuantity, CategoryId: taskCategoryId };
+        var request = { Name: productName, Price: productPrice, Quantity: productQuantity, CategoryId: productCategoryId };
         $.ajax({
             type: 'POST',
             url: '/Home/CreateProduct',
@@ -182,10 +200,10 @@
                 debugger
                 if (response.success) {
                     $('#addmodal').modal('hide');
-                    $("#taskDetail").val("");
-                    $("#taskPrice").val("");
-                    $("#taskQuantity").val("");
-                    $("#taskCategoryId").val("");
+                    $("#productDetail").val("");
+                    $("#productPrice").val("");
+                    $("#productQuantity").val("");
+                    $("#productCategoryId").val("");
                     alert(response.message);
                     window.location.reload();
                 } else {
@@ -199,7 +217,7 @@
         // show success or error messgage
     }
 
-    function deleteTask(id) {
+    function deleteProduct(id) {
         var userConfirmed = confirm("Are you sure you want to delete this Product?");
         if (userConfirmed) {
             var xyz = { Id: id };
@@ -224,21 +242,66 @@
         }
     }
 
-    function updateTask(id, Name, Price, Quantity, CategoryId) {
+    function updateProduct(id, Name, Price, Quantity, CategoryId) {
+
         $('#updatemodal').modal('show');
-        $("#updateTaskDetail").val(Name);
-        $('#updatePriceDetail').val(Price);
-        $('#updateQuantityDetail').val(Quantity);
-        $('#updateCategoryId').val(CategoryId);
-        $("#updateTaskId").val(id);
+        $("#updateProductDetail").val(Name);
+        $('#updateProductPrice').val(Price);
+        $('#updateProductQuantity').val(Quantity);
+        $('#updateProductCategoryId').val(CategoryId);
+        $("#updateProductId").val(id);
     }
 
     function triggerUpdateApi() {
-        var id = $("#updateTaskId").val();
-        var productDetail = $("#updateTaskDetail").val();
-        var productPrice = $('#updatePriceDetail').val();
-        var productQuantity = $('#updateQuantityDetail').val();
-        var productCategoryId = $('#updateCategoryId').val();
+        // validation
+        var id = $("#updateProductId").val();
+        var productName = $("#updateProductDetail").val();
+        var productPrice = $('#updateProductPrice').val();
+        var productQuantity = $('#updateProductQuantity').val();
+        var productCategoryId = $('#updateProductCategoryId').val();
+        var isError = false;
+       if (productName == null || productName == undefined || productName == "") {
+            $(".update-product-detail-error").text("Please enter Product name");
+            $(".update-product-detail-error").css("display", "block");
+            isError = true;
+        }
+        else {
+            $(".update-product-detail-error").text("");
+            $(".update-product-detail-error").css("display", "none");
+        }
+        if (productPrice == null || productPrice == undefined || productPrice == 0) {
+            $(".update-product-price-error").text("Please enter Product price");
+            $(".update-product-price-error").css("display", "block");
+            isError = true;
+
+        }
+        else {
+            $(".update-product-price-error").text("");
+            $(".update-product-price-error").css("display", "none");
+        }
+        if (productQuantity == null || productQuantity == undefined || productQuantity == 0) {
+            $(".update-product-quantity-error").text("Please enter Product quantity");
+            $(".update-product-quantity-error").css("display", "block");
+            isError = true;
+
+        }
+        else {
+
+            $(".update-product-quantity-error").text("");
+            $(".update-product-quantity-error").css("display", "none");
+        }
+        if (productCategoryId == null || productCategoryId == undefined || productCategoryId == 0) {
+            $(".update-product-CategoryId-error").text("Please select category from the dropdown list");
+            $(".update-product-CategoryId-error").css("display", "block");
+            isError = true;
+        }
+        else {
+
+            $(".update-product-CategoryId-error").text("");
+            $(".update-product-CategoryId-error").css("display", "none");
+        }
+        if (isError) { return; }
+
 
         var request = { Id: id, Name: productDetail, Price: productPrice, Quantity: productQuantity, CategoryId: productCategoryId };
         $.ajax({
@@ -251,11 +314,11 @@
                 debugger
                 if (response.success) {
                     $('#updatemodal').modal('hide');
-                    $("#updateTaskDetail").val("");
-                    $('#updatePriceDetail').val("");
-                    $('#updateQuantityDetail').val("");
-                    $('#updateCategoryId').val("");
-                    $("#updateTaskId").val("");
+                    $("#updateProductDetail").val("");
+                    $('#updateProductPrice').val("");
+                    $('#updateProductQuantity').val("");
+                    $('#updateProductCategoryId').val("");
+                    $("#updateProductId").val("");
 
                     alert(response.message);
                     window.location.reload();

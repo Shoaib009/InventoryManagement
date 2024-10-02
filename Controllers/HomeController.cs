@@ -40,16 +40,31 @@ namespace InventoryManagement.Controllers
         [HttpPost]
         public JsonResult CreateCategory([FromBody] CreateTaskRequest Req)
         {
-            if (Req == null || string.IsNullOrEmpty(Req.Name))
+            if (Req == null || string.IsNullOrWhiteSpace(Req.Name))
             {
                 return new JsonResult(new { success = false, message = "please enter category name." });
             }
+            var existingCategory = _databaseContext.Categories.FirstOrDefault(x => x.Name.ToLower().Equals(Req.Name.ToLower()));
+            if (existingCategory != null && existingCategory.IsDeleted == false)
+            {
+                return new JsonResult(new { success = false, message = "This category name already exists. Please enter a new category name." });
+            }
+            else if (existingCategory != null && existingCategory.IsDeleted == true)
+            {
+                existingCategory.IsDeleted = false;
+                _databaseContext.Categories.Update(existingCategory);
+                _databaseContext.SaveChanges();
+                return new JsonResult(new { success = true, message = "Category added successfully." });
+
+            }
             else
             {
+
                 var AddCategory = new Category { Name = Req.Name };
                 _databaseContext.Categories.Add(AddCategory);
                 _databaseContext.SaveChanges();
                 return new JsonResult(new { success = true, message = "Category added successfully." });
+
             }
         }
 
@@ -139,6 +154,7 @@ namespace InventoryManagement.Controllers
                 }
             }
         }
+
         public JsonResult UpdateProduct([FromBody] UpdateTaskRequestProduct Req)
         {
             if (Req == null || string.IsNullOrEmpty(Req.Name) ||
