@@ -49,6 +49,20 @@ namespace InventoryManagement.Controllers
             return View();
         }
 
+        public IActionResult CreateUser(CreateUserRequest Obj)
+        {
+            if (Obj == null || string.IsNullOrEmpty(Obj.FirstName) || string.IsNullOrEmpty(Obj.LastName) || string.IsNullOrEmpty(Obj.Email) || string.IsNullOrEmpty(Obj.ConfirmEmail) ||
+                Obj.PhoneNumber == 0 || string.IsNullOrEmpty(Obj.Password) || string.IsNullOrEmpty(Obj.ConfirmPassword))
+            {
+                //return new JsonResult(new { success = false, message = "Please enter the procuct name, price and quantity." });
+                return RedirectToAction("Registration", "Home");
+            }
+            else
+            {
+
+            }
+        }
+
         [HttpPost]
         public JsonResult CreateCategory([FromBody] CreateTaskRequest Req)
         {
@@ -134,7 +148,7 @@ namespace InventoryManagement.Controllers
             {
                 return new JsonResult(new { success = false, message = "Please enter the procuct name, price and quantity." });
             }
-            
+
             var existingProduct = _databaseContext.Products.FirstOrDefault(x => x.Name.ToLower().Equals(requestProduct.Name.ToLower()));
             if (existingProduct != null && existingProduct.IsDeleted == false)
             {
