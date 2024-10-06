@@ -49,18 +49,63 @@ namespace InventoryManagement.Controllers
             return View();
         }
 
-        public IActionResult CreateUser(CreateUserRequest Obj)
+        [HttpPost]
+
+        public JsonResult UserCreation(UserCreation Obj)
         {
-            if (Obj == null || string.IsNullOrEmpty(Obj.FirstName) || string.IsNullOrEmpty(Obj.LastName) || string.IsNullOrEmpty(Obj.Email) || string.IsNullOrEmpty(Obj.ConfirmEmail) ||
-                Obj.PhoneNumber == 0 || string.IsNullOrEmpty(Obj.Password) || string.IsNullOrEmpty(Obj.ConfirmPassword))
+            if (Obj == null || string.IsNullOrEmpty(Obj.Email) || string.IsNullOrEmpty(Obj.Password))
             {
-                //return new JsonResult(new { success = false, message = "Please enter the procuct name, price and quantity." });
-                return RedirectToAction("Registration", "Home");
+                return new JsonResult(new { success = false, message = "PLease enter email and password." });
+            }
+            var newUser = _databaseContext.Users.FirstOrDefault(x => x.Email.ToLower().Equals(Obj.Email.ToLower()));
+            var newUserPassword = _databaseContext.Users.FirstOrDefault(x => x.Password.ToLower().Equals(Obj.Password.ToLower()));
+
+            if (newUser != null && newUserPassword != null)
+            {
+                return new JsonResult(new { success = true, message = "User login successful." });
             }
             else
             {
-
+                return new JsonResult(new { success = false, message = "User login Failed." });
             }
+        }
+
+        [HttpPost]
+        public JsonResult CreateUser(CreateUserRequest Obj)
+        {
+            if (Obj == null || string.IsNullOrEmpty(Obj.FirstName) || string.IsNullOrEmpty(Obj.LastName) || string.IsNullOrEmpty(Obj.Email) || string.IsNullOrEmpty(Obj.ConfirmEmail) ||
+                string.IsNullOrEmpty(Obj.PhoneNumber) || string.IsNullOrEmpty(Obj.Password) || string.IsNullOrEmpty(Obj.ConfirmPassword))
+            {
+                return new JsonResult(new { success = false, message = "Please enter the first name, last name, email, confirm email, phone number , password and confirm password." });
+                //return RedirectToAction("Registration", "Home");
+            }
+            if (Obj.Email != Obj.ConfirmEmail)
+            {
+                return new JsonResult(new { success = false, message = "email and confirm email are not equal." });
+            }
+            if (Obj.Password != Obj.ConfirmPassword)
+            {
+                return new JsonResult(new { success = false, message = "password and confirm password are not equal." });
+            }
+            var newUser = _databaseContext.Users.FirstOrDefault(x => x.Email.ToLower().Equals(Obj.Email.ToLower()));
+            if (newUser != null)
+            {
+                return new JsonResult(new { success = false, message = "this email already exist. please type new eamil." });
+            }
+            var Phone = Convert.ToInt64(Obj.PhoneNumber);
+            var addUser = new User
+            {
+                FirstName = Obj.FirstName,
+                LastName = Obj.LastName,
+                Email = Obj.Email,
+                ConfirmEmail = Obj.ConfirmEmail,
+                PhoneNumber = Phone,
+                Password = Obj.Password,
+                ConfirmPassword = Obj.ConfirmPassword
+            };
+            _databaseContext.Users.Add(addUser);
+            _databaseContext.SaveChanges();
+            return new JsonResult(new { success = true, message = "User added successfully. Congrats!" });
         }
 
         [HttpPost]

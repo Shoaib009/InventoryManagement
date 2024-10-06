@@ -15,7 +15,7 @@ namespace InventoryManagement.Models
         [Required]
         public string ConfirmEmail { get; set; }
         [Required]
-        public int PhoneNumber { get; set; }
+        public long PhoneNumber { get; set; }
         [Required]
         public string Password { get; set; }
         [Required]
